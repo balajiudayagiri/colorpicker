@@ -8,7 +8,7 @@ function App() {
   return (
     <div className="bg-black sm:p-10 p-3">
       <h1 className="bg-black text-white text-center text-7xl my-9 sticky top-0 font-bold">
-        PureUI Pallete
+        PureUI Palette
       </h1>
       <Tabs tabs={tabsLinks} darkMode={true} />
       <Outlet />
