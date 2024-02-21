@@ -5,6 +5,15 @@ const ImageColorExtractor = () => {
   const isDarkMode = true;
   const [image, setImage] = useState(null);
   const [colors, setColors] = useState([]);
+  const [contextMenuStyle, setContextMenuStyle] = useState({
+    display: "none",
+    position: "absolute",
+  });
+  const [contextMenuPosition, setContextMenuPosition] = useState({
+    top: 0,
+    left: 0,
+  });
+  const [selectedColor, setSelectedColor] = useState(null);
 
   const onDrop = (event) => {
     event.preventDefault();
@@ -73,11 +82,59 @@ const ImageColorExtractor = () => {
     };
   };
 
+  const copyToClipboard = (value) => {
+    navigator.clipboard.writeText(value).then(
+      () => {
+        console.log("Copied to clipboard:", value);
+        hideContextMenu();
+      },
+      (error) => {
+        console.error("Unable to copy to clipboard", error);
+      }
+    );
+  };
+
+  const showContextMenu = (event, color) => {
+    event.preventDefault();
+
+    const position = {
+      top: event.clientY,
+      left: event.clientX,
+    };
+
+    setContextMenuPosition(position);
+    setContextMenuStyle({ display: "block" });
+    setSelectedColor(color);
+  };
+
+  const hideContextMenu = () => {
+    setContextMenuStyle({ display: "none" });
+    setSelectedColor(null);
+  };
+
+  const handleCopy = (format) => {
+    if (selectedColor) {
+      switch (format) {
+        case "rgb":
+          copyToClipboard(rgbStringToAllColors(selectedColor).rgb);
+          break;
+        case "hex":
+          copyToClipboard(rgbStringToAllColors(selectedColor).hex);
+          break;
+        case "hsl":
+          copyToClipboard(rgbStringToAllColors(selectedColor).hsl);
+          break;
+        default:
+          break;
+      }
+    }
+  };
+
   return (
     <div className={`${isDarkMode ? "text-white" : "text-black"}  mt-10`}>
       <label htmlFor="fileInput" className="cursor-pointer w-full">
         <div className="border-dashed border-2 border-gray-400 p-10 mb-2  min-w-full text-center cursor-pointer">
-          Upload a Image
+          Upload an Image
           <input
             type="file"
             id="fileInput"
@@ -99,6 +156,7 @@ const ImageColorExtractor = () => {
             {colors.map((color, index) => (
               <div
                 key={index}
+                onContextMenu={(e) => showContextMenu(e, color)}
                 style={{
                   backgroundColor: color,
                 }}
@@ -113,6 +171,19 @@ const ImageColorExtractor = () => {
           </div>
         </div>
       )}
+
+      {/* Context Menu */}
+      <div
+        className="context-menu"
+        style={{
+          ...contextMenuStyle,
+          top: contextMenuPosition.top,
+          left: contextMenuPosition.left,
+        }}>
+        <div onClick={() => handleCopy("rgb")}>Copy RGB</div>
+        <div onClick={() => handleCopy("hex")}>Copy HEX</div>
+        <div onClick={() => handleCopy("hsl")}>Copy HSL</div>
+      </div>
     </div>
   );
 };
