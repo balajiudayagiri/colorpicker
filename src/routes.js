@@ -7,6 +7,7 @@ import App from "./App";
 import ErrorPage from "./ErrorPage";
 import GradiantPage from "./utiltyComponents/GradientDisplay";
 import ColorPage from "./utiltyComponents/ColorsDisplay";
+import ImageColorExtractor from "./utiltyComponents/ImageColorExtractor";
 
 export const router = createBrowserRouter([
   {
@@ -25,6 +26,10 @@ export const router = createBrowserRouter([
       {
         path: "colorsdisplay",
         element: <ColorPage />,
+      },
+      {
+        path: "imagecolorextractor",
+        element: <ImageColorExtractor />,
       },
     ],
   },
